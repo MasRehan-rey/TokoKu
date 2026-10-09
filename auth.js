@@ -51,7 +51,7 @@ function renderNavbar() {
       : '';
     authArea.innerHTML = `
       ${adminLink}
-      <span class="nav-greeting">Halo, ${escapeHTML(user.name)}</span>
+      <a href="account.html" class="nav-link nav-greeting">Halo, ${escapeHTML(user.name)}</a>
       <button id="logoutBtn" class="nav-link btn-outline-small">Keluar</button>
     `;
     const logoutBtn = document.getElementById('logoutBtn');
@@ -67,7 +67,8 @@ function renderNavbar() {
 function updateWishlistBadge() {
   const badge = document.getElementById('wishlistCount');
   if (!badge) return;
-  const count = (typeof WishlistDB !== 'undefined') ? WishlistDB.getAll().length : 0;
+  const user = SessionDB.getCurrentUser();
+  const count = (typeof WishlistDB !== 'undefined' && user) ? WishlistDB.getWishlist(user.id).length : 0;
   badge.textContent = String(count);
   badge.style.display = count > 0 ? 'inline-flex' : 'none';
 }
@@ -99,7 +100,7 @@ function escapeHTML(str) {
 }
 
 function formatPrice(num) {
-  return `$${Number(num).toFixed(2)}`;
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num * 15000);
 }
 
 function showToast(message, type = 'success') {

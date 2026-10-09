@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderStats();
   renderProductsTable();
   renderOrdersTable();
+  renderUsersTable();
   setupTabs();
   setupProductModal();
   setupDeleteModal();
@@ -40,6 +41,8 @@ function setupTabs() {
       const target = tab.dataset.tab;
       document.getElementById('tabProducts').style.display = target === 'products' ? 'block' : 'none';
       document.getElementById('tabOrders').style.display = target === 'orders' ? 'block' : 'none';
+      const tabUsers = document.getElementById('tabUsers');
+      if (tabUsers) tabUsers.style.display = target === 'users' ? 'block' : 'none';
     });
   });
 }
@@ -86,7 +89,7 @@ function renderOrdersTable() {
   const tbody = document.getElementById('ordersTableBody');
 
   if (orders.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center">Belum ada pesanan.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center">Belum ada pesanan.</td></tr>`;
     return;
   }
 
@@ -94,7 +97,15 @@ function renderOrdersTable() {
     const user = users.find(u => u.id === o.userId);
     const itemsLabel = o.items.map(i => `${i.name} ×${i.qty}`).join(', ');
     const date = new Date(o.createdAt).toLocaleString('id-ID');
-    const status = o.status === 'paid' ? 'Lunas' : o.status;
+    const status = o.status || 'Menunggu Pembayaran';
+    const statusOptions = ['Menunggu Pembayaran', 'Diproses', 'Dikemas', 'Dikirim', 'Selesai', 'Dibatalkan'];
+    
+    let selectHtml = `<select class="status-select" data-order-id="${o.id}" style="padding:4px; border-radius:4px;">`;
+    statusOptions.forEach(opt => {
+      selectHtml += `<option value="${opt}" ${status === opt ? 'selected' : ''}>${opt}</option>`;
+    });
+    selectHtml += `</select>`;
+
     return `
       <tr>
         <td style="font-family:monospace; font-size:0.78rem;">${escapeHTML(o.id)}</td>
@@ -103,10 +114,53 @@ function renderOrdersTable() {
         <td>${formatPrice(o.total)}</td>
         <td>${escapeHTML(date)}</td>
         <td><span class="stock-pill stock-ok">${escapeHTML(status)}</span></td>
+        <td>${selectHtml}</td>
+      </tr>
+    `;
+  }).join('');
+  
+  document.querySelectorAll('.status-select').forEach(sel => {
+    sel.addEventListener('change', (e) => {
+      const orderId = e.target.getAttribute('data-order-id');
+      const newStatus = e.target.value;
+      const allOrders = OrderDB.getAll();
+      const idx = allOrders.findIndex(o => o.id === orderId);
+      if (idx !== -1) {
+        allOrders[idx].status = newStatus;
+        writeJSON(DB_KEYS.ORDERS, allOrders);
+        renderOrdersTable();
+        showToast('Status pesanan diperbarui');
+      }
+    });
+  });
+}
+
+/* ---------- Users table ---------- */
+function renderUsersTable() {
+  const users = UserDB.getAll();
+  const tbody = document.getElementById('usersTableBody');
+  if (!tbody) return;
+
+  if (users.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center">Belum ada pelanggan terdaftar.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = users.map(u => {
+    const date = new Date(u.createdAt).toLocaleDateString('id-ID');
+    return `
+      <tr>
+        <td style="font-family:monospace; font-size:0.78rem;">${escapeHTML(u.id)}</td>
+        <td>${escapeHTML(u.name)}</td>
+        <td>${escapeHTML(u.email)}</td>
+        <td>${escapeHTML(u.phone || '—')}</td>
+        <td>${escapeHTML(u.role === 'admin' ? 'Admin' : 'Pelanggan')}</td>
+        <td>${escapeHTML(date)}</td>
       </tr>
     `;
   }).join('');
 }
+
 
 /* ---------- Product Add/Edit Modal ---------- */
 function setupProductModal() {

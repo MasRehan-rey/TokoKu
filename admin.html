@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Admin — ShopLite</title>
+  <title>Panel Admin — TokoKu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
           </span>
-          Shop<span>Lite</span>
+          Toko<span>Ku</span>
           <span style="font-size:0.7rem; font-weight:800; background:var(--color-primary-soft); color:var(--color-primary-dark); padding:3px 8px; border-radius:999px; letter-spacing:0.04em;">ADMIN</span>
         </a>
         <div class="nav-actions">
@@ -62,6 +62,7 @@
     <div class="admin-tabs">
       <button class="admin-tab active" data-tab="products">Kelola Produk</button>
       <button class="admin-tab" data-tab="orders">Riwayat Pesanan</button>
+      <button class="admin-tab" data-tab="users">Pelanggan</button>
     </div>
 
     <!-- PRODUCTS TAB -->
@@ -99,9 +100,29 @@
               <th>Total</th>
               <th>Tanggal</th>
               <th>Status</th>
+              <th>Aksi</th>
             </tr>
           </thead>
           <tbody id="ordersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- USERS TAB -->
+    <div id="tabUsers" style="display:none;">
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nama</th>
+              <th>Email</th>
+              <th>Telepon</th>
+              <th>Peran</th>
+              <th>Tanggal Daftar</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -164,7 +185,7 @@
 
   <footer class="site-footer">
     <div class="container text-center">
-      <p class="copyright">© 2026 ShopLite. Panel Administrasi Toko.</p>
+      <p class="copyright">© 2026 TokoKu. Panel Administrasi Toko.</p>
     </div>
   </footer>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar Akun — ShopLite</title>
+  <title>Daftar Akun — TokoKu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
           </span>
-          Shop<span>Lite</span>
+          Toko<span>Ku</span>
         </a>
         <div class="nav-actions">
           <a href="index.html" class="btn btn-secondary btn-sm">← Kembali ke Toko</a>
@@ -34,7 +34,7 @@
   <div class="auth-wrap">
     <div class="auth-card">
       <h2>Buat Akun Baru</h2>
-      <p class="subtitle">Daftar untuk menikmati belanja nyaman di ShopLite.</p>
+      <p class="subtitle">Daftar untuk menikmati belanja nyaman di TokoKu.</p>
 
       <div id="formError" class="form-error"></div>
 
@@ -49,13 +49,33 @@
         </div>
         <div class="form-group">
           <label for="password">Kata Sandi</label>
-          <input type="password" id="password" required minlength="6" placeholder="Minimal 6 karakter">
+          <div class="password-input-wrap" style="position: relative;">
+            <input type="password" id="password" required minlength="6" placeholder="Minimal 6 karakter" style="padding-right: 40px; width: 100%; box-sizing: border-box;">
+            <button type="button" class="togglePasswordBtn" data-target="password" aria-label="Tampilkan password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted);">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+          <div id="passwordStrength" style="font-size: 0.8rem; margin-top: 4px; color: var(--text-muted);">Kekuatan kata sandi: <span id="strengthText">Belum cukup</span></div>
         </div>
         <div class="form-group">
           <label for="confirmPassword">Konfirmasi Kata Sandi</label>
-          <input type="password" id="confirmPassword" required placeholder="Ulangi kata sandi">
+          <div class="password-input-wrap" style="position: relative;">
+            <input type="password" id="confirmPassword" required placeholder="Ulangi kata sandi" style="padding-right: 40px; width: 100%; box-sizing: border-box;">
+            <button type="button" class="togglePasswordBtn" data-target="confirmPassword" aria-label="Tampilkan password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted);">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary btn-block" style="margin-top:6px;">Daftar Akun</button>
+        <div class="form-options" style="margin-bottom: 1rem; font-size: 0.9rem;">
+          <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; color: var(--text-muted);">
+            <input type="checkbox" id="tosCheckbox" required style="margin-top: 3px;"> 
+            <span>Saya setuju dengan <a href="#" style="color: var(--primary);">Syarat & Ketentuan</a> serta <a href="#" style="color: var(--primary);">Kebijakan Privasi</a> TokoKu.</span>
+          </label>
+        </div>
+        <button type="submit" id="registerBtn" class="btn btn-primary btn-block" style="margin-top:6px;">
+          <span id="registerBtnText">Daftar Akun</span>
+          <span id="registerSpinner" style="display: none;">⏳ Loading...</span>
+        </button>
       </form>
 
       <p class="auth-switch">Sudah punya akun? <a href="login.html">Masuk di sini</a></p>
@@ -64,7 +84,7 @@
 
   <footer class="site-footer">
     <div class="container text-center">
-      <p class="copyright">© 2026 ShopLite. Semua hak dilindungi.</p>
+      <p class="copyright">© 2026 TokoKu. Semua hak dilindungi.</p>
     </div>
   </footer>
 
@@ -73,6 +93,36 @@
   <script>
     redirectIfLoggedIn('index.html');
 
+    const toggleBtns = document.querySelectorAll('.togglePasswordBtn');
+    toggleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        if (input) {
+          const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+          input.setAttribute('type', type);
+        }
+      });
+    });
+
+    const passwordInput = document.getElementById('password');
+    const strengthText = document.getElementById('strengthText');
+    const strengthColors = ['var(--text-muted)', '#f44336', '#ff9800', '#4caf50'];
+    const strengthLabels = ['Belum cukup', 'Lemah', 'Sedang', 'Kuat'];
+
+    passwordInput.addEventListener('input', () => {
+      const val = passwordInput.value;
+      let score = 0;
+      if (val.length >= 6) score++;
+      if (val.match(/[A-Z]/) && val.match(/[0-9]/)) score++;
+      if (val.length >= 10 && val.match(/[^A-Za-z0-9]/)) score++;
+      
+      if (val.length === 0) score = 0;
+      
+      strengthText.textContent = strengthLabels[score];
+      strengthText.style.color = strengthColors[score];
+    });
+
     document.getElementById('registerForm').addEventListener('submit', (e) => {
       e.preventDefault();
       const name = document.getElementById('name').value.trim();
@@ -80,6 +130,9 @@
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
       const errorBox = document.getElementById('formError');
+      const registerBtn = document.getElementById('registerBtn');
+      const registerBtnText = document.getElementById('registerBtnText');
+      const registerSpinner = document.getElementById('registerSpinner');
 
       errorBox.classList.remove('show');
 
@@ -94,16 +147,26 @@
         return;
       }
 
-      try {
-        const user = UserDB.create({ name, email, password, role: 'user' });
-        SessionDB.login(user);
-        window.location.href = sessionStorage.getItem('checkoutProductId')
-          ? 'checkout.html'
-          : 'index.html';
-      } catch (err) {
-        errorBox.textContent = err.message;
-        errorBox.classList.add('show');
-      }
+      registerBtn.disabled = true;
+      registerBtnText.style.display = 'none';
+      registerSpinner.style.display = 'inline-block';
+
+      setTimeout(() => {
+        try {
+          const user = UserDB.create({ name, email, password, role: 'user' });
+          SessionDB.login(user);
+          alert('Registrasi berhasil! Mengarahkan ke halaman...');
+          window.location.href = sessionStorage.getItem('checkoutProductId')
+            ? 'checkout.html'
+            : 'index.html';
+        } catch (err) {
+          errorBox.textContent = err.message;
+          errorBox.classList.add('show');
+          registerBtn.disabled = false;
+          registerBtnText.style.display = 'inline-block';
+          registerSpinner.style.display = 'none';
+        }
+      }, 800);
     });
   </script>
 </body>

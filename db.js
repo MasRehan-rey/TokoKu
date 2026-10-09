@@ -9,7 +9,8 @@ const DB_KEYS = {
   CART: 'ecom_cart',          // cart is per logged-in user, keyed inside object
   ORDERS: 'ecom_orders',
   SESSION: 'ecom_session',
-  INIT_FLAG: 'ecom_initialized'
+  INIT_FLAG: 'ecom_initialized',
+  WISHLIST: 'ecom_wishlist'
 };
 
 /* ---------- generic helpers ---------- */
@@ -50,16 +51,16 @@ function seedDatabase() {
     {
       id: genId('user'),
       name: 'Admin',
-      email: 'admin@shop.com',
+      email: 'admin@tokoku.demo',
       password: simpleHash('admin123'),
       role: 'admin',
       createdAt: new Date().toISOString()
     },
     {
       id: genId('user'),
-      name: 'Pengguna Demo',
-      email: 'user@shop.com',
-      password: simpleHash('user123'),
+      name: 'Pelanggan Demo',
+      email: 'pelanggan@tokoku.demo',
+      password: simpleHash('pelanggan123'),
       role: 'user',
       createdAt: new Date().toISOString()
     }
@@ -255,7 +256,7 @@ function localizeDemoData() {
   if (changed) writeJSON(DB_KEYS.PRODUCTS, products);
 
   const users = readJSON(DB_KEYS.USERS, []);
-  const demoUser = users.find(user => user.email === 'user@shop.com' && user.name === 'Demo User');
+  const demoUser = users.find(user => user.email === 'user@tokoku.demo' && user.name === 'Demo User');
   if (demoUser) {
     demoUser.name = 'Pengguna Demo';
     writeJSON(DB_KEYS.USERS, users);
@@ -443,5 +444,29 @@ const SessionDB = {
   },
   logout() {
     localStorage.removeItem(DB_KEYS.SESSION);
+  }
+};
+
+/* ---------- Wishlist ---------- */
+const WishlistDB = {
+  getAllWishlists() {
+    return readJSON(DB_KEYS.WISHLIST, {});
+  },
+  getWishlist(userId) {
+    const lists = this.getAllWishlists();
+    return lists[userId] || [];
+  },
+  toggle(userId, productId) {
+    const lists = this.getAllWishlists();
+    const list = lists[userId] || [];
+    const idx = list.indexOf(productId);
+    if (idx > -1) {
+      list.splice(idx, 1);
+    } else {
+      list.push(productId);
+    }
+    lists[userId] = list;
+    writeJSON(DB_KEYS.WISHLIST, lists);
+    return list;
   }
 };

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pembayaran — ShopLite</title>
+  <title>Pembayaran — TokoKu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
               <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
           </span>
-          Shop<span>Lite</span>
+          Toko<span>Ku</span>
         </a>
 
         <div class="nav-menu">
@@ -57,8 +57,15 @@
           <div class="checkout-section">
             <h3>Informasi Pengiriman</h3>
             <div class="form-group">
-              <label for="fullName">Nama Lengkap</label>
-              <input type="text" id="fullName" required placeholder="Nama penerima">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fullName">Nama Lengkap</label>
+                <input type="text" id="fullName" required placeholder="Nama penerima">
+              </div>
+              <div class="form-group">
+                <label for="phone">Nomor Telepon</label>
+                <input type="text" id="phone" required placeholder="08123456789">
+              </div>
             </div>
             <div class="form-group">
               <label for="address">Alamat Pengiriman</label>
@@ -82,29 +89,28 @@
 
           <!-- Payment section -->
           <div class="checkout-section">
-            <h3>Informasi Pembayaran</h3>
+            <h3>Informasi Pembayaran Simulasi</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Ini adalah transaksi demo. Tidak ada dana sungguhan yang dipotong.</p>
             <div id="paymentError" class="form-error"></div>
+            
             <div class="form-group">
-              <label for="cardName">Nama pada Kartu</label>
-              <input type="text" id="cardName" required placeholder="Sesuai kartu">
+              <label for="paymentMethod">Metode Pembayaran</label>
+              <select id="paymentMethod" required style="width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: var(--radius); font-family: inherit;">
+                <option value="transfer">Transfer Bank Simulasi</option>
+                <option value="qris">QRIS Simulasi</option>
+                <option value="ewallet">E-Wallet Simulasi</option>
+                <option value="cod">Cash on Delivery (COD)</option>
+              </select>
             </div>
-            <div class="form-group">
-              <label for="cardNumber">Nomor Kartu Kredit / Debit</label>
-              <input type="text" id="cardNumber" required maxlength="19" placeholder="1234 5678 9012 3456">
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="expiry">Masa Berlaku (BB/TT)</label>
-                <input type="text" id="expiry" required maxlength="5" placeholder="12/28">
+            
+            <div class="form-group" style="margin-top: 1rem;">
+              <label for="voucherCode">Kode Voucher (Opsional)</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="voucherCode" placeholder="Masukkan kode promo">
+                <button type="button" id="applyVoucherBtn" class="btn btn-secondary">Terapkan</button>
               </div>
-              <div class="form-group">
-                <label for="cvv">CVV</label>
-                <input type="text" id="cvv" required maxlength="4" placeholder="123">
-              </div>
+              <div id="voucherMessage" style="font-size: 0.85rem; margin-top: 4px;"></div>
             </div>
-            <p style="font-size:0.8rem; color:var(--color-text-muted); margin-top:-2px;">
-              🔒 Simulasi toko demo. Pembayaran aman & tidak diproses nyata. Masukkan nomor kartu 16 angka contoh.
-            </p>
           </div>
         </div>
 
@@ -126,7 +132,7 @@
 
   <footer class="site-footer">
     <div class="container text-center">
-      <p class="copyright">© 2026 ShopLite. Semua transaksi terenkripsi dengan aman.</p>
+      <p class="copyright">© 2026 TokoKu. Semua transaksi terenkripsi dengan aman.</p>
     </div>
   </footer>
 

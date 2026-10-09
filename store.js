@@ -1,6 +1,6 @@
 /* =========================================================
    store.js — storefront page logic (index.html)
-   Redesigned for ShopLite with modern aesthetics & full functionality
+   Redesigned for TokoKu with modern aesthetics & full functionality
    ========================================================= */
 
 let allProducts = [];
@@ -230,8 +230,13 @@ function getFilteredProducts() {
   }
 
   if (currentFilters.wishlistOnly && typeof WishlistDB !== 'undefined') {
-    const wishlistedIds = WishlistDB.getAll();
-    list = list.filter(p => wishlistedIds.includes(p.id));
+    const user = SessionDB.getCurrentUser();
+    if (user) {
+      const wishlistedIds = WishlistDB.getWishlist(user.id);
+      list = list.filter(p => wishlistedIds.includes(p.id));
+    } else {
+      list = []; // not logged in, no wishlist
+    }
   }
 
   switch (currentFilters.sort) {
@@ -282,7 +287,8 @@ function productCardHTML(p) {
   else if (p.stock <= 5) { stockLabel = `Tersisa ${p.stock}`; stockClass = 'stock-low'; }
   else { stockLabel = 'Tersedia'; stockClass = 'stock-ok'; }
 
-  const isWishlisted = typeof WishlistDB !== 'undefined' && WishlistDB.has(p.id);
+  const user = SessionDB.getCurrentUser();
+  const isWishlisted = typeof WishlistDB !== 'undefined' && user && WishlistDB.getWishlist(user.id).includes(p.id);
   const { rating, reviews } = getProductRating(p);
 
   return `
@@ -337,7 +343,16 @@ function productCardHTML(p) {
 
 function handleToggleWishlist(productId, btn) {
   if (typeof WishlistDB === 'undefined') return;
-  const added = WishlistDB.toggle(productId);
+  const user = SessionDB.getCurrentUser();
+  if (!user) {
+    showToast('Silakan login untuk menggunakan wishlist.', 'error');
+    setTimeout(() => { window.location.href = 'login.html'; }, 900);
+    return;
+  }
+  
+  const wishlist = WishlistDB.toggle(user.id, productId);
+  const added = wishlist.includes(productId);
+  
   btn.classList.toggle('active', added);
   const svg = btn.querySelector('svg');
   if (svg) {

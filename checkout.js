@@ -8,6 +8,7 @@ const CHK_FREE_SHIPPING_THRESHOLD = 75;
 
 let checkoutUser = null;
 let checkoutItems = [];
+let appliedVoucher = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   checkoutUser = requireLogin('login.html');
@@ -42,10 +43,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // prefill name from account
   document.getElementById('fullName').value = checkoutUser.name || '';
+  
+  // prefill phone if available (mock from user.phone if it exists)
+  if (checkoutUser.phone) document.getElementById('phone').value = checkoutUser.phone;
 
   renderMiniOrder();
   renderSummary();
-  setupCardFormatting();
+
+  const applyVoucherBtn = document.getElementById('applyVoucherBtn');
+  if (applyVoucherBtn) {
+    applyVoucherBtn.addEventListener('click', applyVoucher);
+  }
 
   document.getElementById('checkoutForm').addEventListener('submit', handlePlaceOrder);
 });
@@ -62,75 +70,97 @@ function renderMiniOrder() {
 
 function calcTotals() {
   const subtotal = checkoutItems.reduce((sum, i) => sum + i.product.price * i.qty, 0);
-  const tax = subtotal * CHK_TAX_RATE;
-  const shipping = subtotal >= CHK_FREE_SHIPPING_THRESHOLD ? 0 : CHK_FLAT_SHIPPING;
-  const total = subtotal + tax + shipping;
-  return { subtotal, tax, shipping, total };
+  let discount = 0;
+  
+  if (appliedVoucher) {
+    if (appliedVoucher.type === 'percent') {
+      discount = subtotal * (appliedVoucher.value / 100);
+      if (appliedVoucher.maxDiscount && discount > appliedVoucher.maxDiscount) {
+        discount = appliedVoucher.maxDiscount;
+      }
+    } else if (appliedVoucher.type === 'fixed') {
+      discount = appliedVoucher.value;
+    }
+  }
+  
+  // Prevent subtotal - discount from being negative
+  const subtotalAfterDiscount = Math.max(0, subtotal - discount);
+
+  const tax = subtotalAfterDiscount * CHK_TAX_RATE;
+  const shipping = subtotalAfterDiscount >= CHK_FREE_SHIPPING_THRESHOLD ? 0 : CHK_FLAT_SHIPPING;
+  const total = subtotalAfterDiscount + tax + shipping;
+  return { subtotal, discount, tax, shipping, total };
 }
 
 function renderSummary() {
-  const { subtotal, tax, shipping, total } = calcTotals();
-  document.getElementById('sumSubtotal').textContent = formatPrice(subtotal);
-  document.getElementById('sumTax').textContent = formatPrice(tax);
-  document.getElementById('sumShipping').textContent = shipping === 0 ? 'GRATIS' : formatPrice(shipping);
-  document.getElementById('sumTotal').textContent = formatPrice(total);
+  const { subtotal, discount, tax, shipping, total } = calcTotals();
+  
+  let summaryHTML = `
+    <div class="summary-row"><span>Subtotal</span><span>${formatPrice(subtotal)}</span></div>
+  `;
+  
+  if (discount > 0) {
+    summaryHTML += `<div class="summary-row" style="color:var(--primary);"><span>Diskon (${appliedVoucher.code})</span><span>-${formatPrice(discount)}</span></div>`;
+  }
+  
+  summaryHTML += `
+    <div class="summary-row"><span>Pajak (8%)</span><span id="sumTax">${formatPrice(tax)}</span></div>
+    <div class="summary-row"><span>Ongkos Kirim</span><span id="sumShipping">${shipping === 0 ? 'GRATIS' : formatPrice(shipping)}</span></div>
+    <div class="summary-row total"><span>Total Akhir</span><span id="sumTotal">${formatPrice(total)}</span></div>
+  `;
+  
+  // Assuming the summary container is fixed
+  const summaryContainer = document.querySelector('.summary-card');
+  if (summaryContainer) {
+    // We update inner HTML of summary
+    const placeOrderHtml = `<button type="submit" id="placeOrderBtn" class="btn btn-primary btn-block" form="checkoutForm" style="margin-top:16px;">Konfirmasi Pesanan</button>`;
+    summaryContainer.innerHTML = `<h3>Ringkasan Pesanan</h3>${summaryHTML}${placeOrderHtml}`;
+  }
 }
 
-function setupCardFormatting() {
-  const cardInput = document.getElementById('cardNumber');
-  cardInput.addEventListener('input', () => {
-    let digits = cardInput.value.replace(/\D/g, '').slice(0, 16);
-    cardInput.value = digits.replace(/(.{4})/g, '$1 ').trim();
-  });
-
-  const expiryInput = document.getElementById('expiry');
-  expiryInput.addEventListener('input', () => {
-    let digits = expiryInput.value.replace(/\D/g, '').slice(0, 4);
-    if (digits.length >= 3) {
-      expiryInput.value = digits.slice(0, 2) + '/' + digits.slice(2);
-    } else {
-      expiryInput.value = digits;
-    }
-  });
-
-  document.getElementById('cvv').addEventListener('input', (e) => {
-    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
-  });
+function applyVoucher() {
+  const code = document.getElementById('voucherCode').value.trim().toUpperCase();
+  const msgEl = document.getElementById('voucherMessage');
+  const { subtotal } = calcTotals();
+  
+  if (!code) {
+    msgEl.textContent = 'Masukkan kode voucher terlebih dahulu.';
+    msgEl.style.color = 'var(--danger)';
+    return;
+  }
+  
+  // Dummy voucher list
+  const validVouchers = {
+    'HEMAT10': { code: 'HEMAT10', type: 'percent', value: 10, minPurchase: 50, maxDiscount: 20 },
+    'DISKON20': { code: 'DISKON20', type: 'fixed', value: 20, minPurchase: 100 }
+  };
+  
+  const voucher = validVouchers[code];
+  if (!voucher) {
+    msgEl.textContent = 'Kode voucher tidak valid atau sudah kadaluarsa.';
+    msgEl.style.color = 'var(--danger)';
+    appliedVoucher = null;
+  } else if (subtotal < voucher.minPurchase) {
+    msgEl.textContent = `Minimal belanja ${formatPrice(voucher.minPurchase)} untuk menggunakan voucher ini.`;
+    msgEl.style.color = 'var(--danger)';
+    appliedVoucher = null;
+  } else {
+    appliedVoucher = voucher;
+    msgEl.textContent = 'Voucher berhasil diterapkan!';
+    msgEl.style.color = 'var(--success)';
+  }
+  
+  renderSummary();
 }
 
 function validatePayment() {
-  const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
-  const expiry = document.getElementById('expiry').value;
-  const cvv = document.getElementById('cvv').value;
-  const errorBox = document.getElementById('paymentError');
-
-  errorBox.classList.remove('show');
-
-  if (cardNumber.length < 13 || cardNumber.length > 16 || !/^\d+$/.test(cardNumber)) {
-    errorBox.textContent = 'Masukkan nomor kartu yang valid.';
+  const method = document.getElementById('paymentMethod').value;
+  if (!method) {
+    const errorBox = document.getElementById('paymentError');
+    errorBox.textContent = 'Pilih metode pembayaran simulasi.';
     errorBox.classList.add('show');
     return false;
   }
-
-  const expiryMatch = /^(\d{2})\/(\d{2})$/.exec(expiry);
-  if (!expiryMatch) {
-    errorBox.textContent = 'Masukkan masa berlaku dengan format BB/TT.';
-    errorBox.classList.add('show');
-    return false;
-  }
-  const month = parseInt(expiryMatch[1], 10);
-  if (month < 1 || month > 12) {
-    errorBox.textContent = 'Masukkan bulan masa berlaku yang valid.';
-    errorBox.classList.add('show');
-    return false;
-  }
-
-  if (cvv.length < 3) {
-    errorBox.textContent = 'Masukkan kode CVV yang valid.';
-    errorBox.classList.add('show');
-    return false;
-  }
-
   return true;
 }
 
@@ -154,10 +184,11 @@ function handlePlaceOrder(e) {
 
   // simulate a payment processing delay
   setTimeout(() => {
-    const { subtotal, tax, shipping, total } = calcTotals();
+    const { subtotal, discount, tax, shipping, total } = calcTotals();
 
     const shipping_info = {
       fullName: document.getElementById('fullName').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
       address: document.getElementById('address').value.trim(),
       city: document.getElementById('city').value.trim(),
       zip: document.getElementById('zip').value.trim(),
@@ -171,15 +202,21 @@ function handlePlaceOrder(e) {
       qty: i.qty
     }));
 
+    const methodEl = document.getElementById('paymentMethod');
+    const paymentMethodLabel = methodEl.options[methodEl.selectedIndex].text;
+
     const order = OrderDB.create({
       userId: checkoutUser.id,
       items: orderItems,
       subtotal,
+      discount,
+      voucherCode: appliedVoucher ? appliedVoucher.code : null,
       tax,
       shipping,
       total,
       shippingInfo: shipping_info,
-      paymentLast4: document.getElementById('cardNumber').value.replace(/\s/g, '').slice(-4)
+      paymentMethod: paymentMethodLabel,
+      status: 'Menunggu Pembayaran'
     });
 
     // decrement stock for each purchased product

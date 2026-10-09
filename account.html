@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akun Saya — TokoKu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .account-layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .account-nav {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+      align-self: start;
+    }
+    .account-nav-item {
+      display: block;
+      padding: 10px 15px;
+      color: var(--text-color);
+      text-decoration: none;
+      border-radius: 6px;
+      margin-bottom: 5px;
+      font-weight: 500;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .account-nav-item:hover, .account-nav-item.active {
+      background: var(--primary);
+      color: white;
+    }
+    .account-content-section {
+      display: none;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+    }
+    .account-content-section.active {
+      display: block;
+    }
+    .order-card {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+    @media (max-width: 768px) {
+      .account-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <a href="index.html" class="brand">
+          <span class="brand-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          </span>
+          Toko<span>Ku</span>
+        </a>
+
+        <div class="nav-menu">
+          <a href="index.html" class="nav-item">Home</a>
+          <a href="index.html#products-section" class="nav-item">Shop</a>
+          <a href="index.html#categories-section" class="nav-item">Collections</a>
+        </div>
+
+        <div class="nav-actions">
+          <div id="authArea" class="auth-area"></div>
+          <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Keranjang Belanja">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span id="cartCount" class="cart-badge">0</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Akun Saya</h1>
+      <p class="subtitle">Kelola profil, alamat, dan riwayat pesanan Anda.</p>
+    </div>
+
+    <div class="account-layout">
+      <div class="account-nav">
+        <a class="account-nav-item active" data-target="profile-sec">Profil</a>
+        <a class="account-nav-item" data-target="orders-sec">Riwayat Pesanan</a>
+        <a class="account-nav-item" data-target="wishlist-sec">Wishlist</a>
+        <a class="account-nav-item" onclick="logoutUser()" style="color: var(--danger); margin-top: 1rem;">Keluar</a>
+      </div>
+
+      <div class="account-content">
+        <!-- Profile Section -->
+        <div id="profile-sec" class="account-content-section active">
+          <h2>Informasi Profil</h2>
+          <div id="profileError" class="form-error"></div>
+          <div id="profileSuccess" style="color:var(--success); margin-bottom:1rem; display:none; font-weight:500;">Profil berhasil diperbarui.</div>
+          <form id="profileForm">
+            <div class="form-group">
+              <label for="profName">Nama Lengkap</label>
+              <input type="text" id="profName" required>
+            </div>
+            <div class="form-group">
+              <label for="profEmail">Email</label>
+              <input type="email" id="profEmail" readonly style="background:var(--bg-alt); cursor:not-allowed;">
+            </div>
+            <div class="form-group">
+              <label for="profPhone">Nomor Telepon</label>
+              <input type="text" id="profPhone" placeholder="08123456789">
+            </div>
+            <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border-color);">
+            <h3>Ubah Kata Sandi (Opsional)</h3>
+            <div class="form-group">
+              <label for="profNewPass">Kata Sandi Baru</label>
+              <input type="password" id="profNewPass" minlength="6" placeholder="Biarkan kosong jika tidak ingin diubah">
+            </div>
+            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+          </form>
+        </div>
+
+        <!-- Orders Section -->
+        <div id="orders-sec" class="account-content-section">
+          <h2>Riwayat Pesanan</h2>
+          <div id="ordersContainer">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Wishlist Section -->
+        <div id="wishlist-sec" class="account-content-section">
+          <h2>Wishlist Saya</h2>
+          <div id="wishlistContainer" class="products-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+            <!-- Rendered by JS -->
+          </div>
+          <div id="wishlistEmpty" class="empty-state" style="display:none;">
+            <p>Wishlist masih kosong.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" style="margin-top: 3rem;">
+    <div class="container text-center">
+      <p class="copyright">© 2026 TokoKu. Semua hak dilindungi.</p>
+    </div>
+  </footer>
+
+  <script src="db.js"></script>
+  <script src="auth.js"></script>
+  <script src="account.js"></script>
+</body>
+</html>
