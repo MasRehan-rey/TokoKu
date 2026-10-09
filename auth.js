@@ -27,6 +27,40 @@ function redirectIfLoggedIn(target = 'index.html') {
   }
 }
 
+function renderMobileNavbar(user) {
+  const mobileAuthArea = document.getElementById('mobileAuthArea');
+  if (!mobileAuthArea) return;
+
+  if (!user) {
+    mobileAuthArea.innerHTML = `
+      <a href="login.html" style="display:block; margin-bottom:12px; font-weight:600; color:var(--color-text);">Masuk</a>
+      <a href="register.html" style="display:block; font-weight:600; color:var(--color-primary);">Daftar</a>
+    `;
+  } else {
+    let menuItems = '';
+    if (user.role === 'admin') {
+      menuItems += `<a href="admin.html" style="display:block; margin-bottom:12px; font-weight:600; color:var(--color-text);">Dasbor Admin</a>`;
+    } else {
+      menuItems += `
+        <a href="account.html" style="display:block; margin-bottom:12px; font-weight:600; color:var(--color-text);">Akun Saya</a>
+        <a href="account.html#orders-sec" style="display:block; margin-bottom:12px; font-weight:600; color:var(--color-text);">Riwayat Pesanan</a>
+        <a href="account.html#wishlist-sec" style="display:block; margin-bottom:12px; font-weight:600; color:var(--color-text);">Wishlist</a>
+      `;
+    }
+
+    mobileAuthArea.innerHTML = `
+      <div style="font-weight:700; color:var(--color-text); margin-bottom:12px;">Halo, ${escapeHTML(user.name)}</div>
+      ${menuItems}
+      <button id="mobileLogoutBtn" style="background:none; border:none; padding:0; font-weight:600; color:var(--color-danger); cursor:pointer;">Keluar</button>
+    `;
+    
+    const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+    if (mobileLogoutBtn) {
+      mobileLogoutBtn.addEventListener('click', logoutUser);
+    }
+  }
+}
+
 function logoutUser() {
   SessionDB.logout();
   window.location.href = 'index.html';
@@ -46,20 +80,76 @@ function renderNavbar() {
       <a href="register.html" class="nav-link btn-outline-small">Daftar</a>
     `;
   } else {
-    const adminLink = user.role === 'admin'
-      ? `<a href="admin.html" class="nav-link">Panel Admin</a>`
-      : '';
+    const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+    
+    let menuItems = '';
+    if (user.role === 'admin') {
+      menuItems += `<a href="admin.html" class="dropdown-item">Dasbor Admin</a>`;
+    } else {
+      menuItems += `
+        <a href="account.html" class="dropdown-item">Akun Saya</a>
+        <a href="account.html#orders-sec" class="dropdown-item">Riwayat Pesanan</a>
+        <a href="account.html#wishlist-sec" class="dropdown-item">Wishlist</a>
+      `;
+    }
+
     authArea.innerHTML = `
-      ${adminLink}
-      <a href="account.html" class="nav-link nav-greeting">Halo, ${escapeHTML(user.name)}</a>
-      <button id="logoutBtn" class="nav-link btn-outline-small">Keluar</button>
+      <div class="account-dropdown-wrap">
+        <button class="account-dropdown-btn" id="accountDropdownBtn" aria-expanded="false" aria-haspopup="true">
+          <div class="account-avatar">${initials}</div>
+          <span>${escapeHTML(user.name.split(' ')[0])}</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 2px;">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="account-dropdown-menu" id="accountDropdownMenu" role="menu">
+          <div class="dropdown-header">
+            <div class="dropdown-name">${escapeHTML(user.name)}</div>
+            <div class="dropdown-email">${escapeHTML(user.email)}</div>
+          </div>
+          ${menuItems}
+          <button id="logoutBtn" class="dropdown-item text-danger" role="menuitem" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
+            Keluar
+          </button>
+        </div>
+      </div>
     `;
+
+    const dropdownBtn = document.getElementById('accountDropdownBtn');
+    const dropdownMenu = document.getElementById('accountDropdownMenu');
     const logoutBtn = document.getElementById('logoutBtn');
+
+    if (dropdownBtn && dropdownMenu) {
+      dropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isExpanded = dropdownBtn.getAttribute('aria-expanded') === 'true';
+        dropdownBtn.setAttribute('aria-expanded', !isExpanded);
+        dropdownMenu.classList.toggle('show');
+      });
+
+      // Close when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!dropdownBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+          dropdownBtn.setAttribute('aria-expanded', 'false');
+          dropdownMenu.classList.remove('show');
+        }
+      });
+
+      // Close on escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          dropdownBtn.setAttribute('aria-expanded', 'false');
+          dropdownMenu.classList.remove('show');
+        }
+      });
+    }
+
     if (logoutBtn) {
       logoutBtn.addEventListener('click', logoutUser);
     }
   }
 
+  renderMobileNavbar(user);
   updateCartBadge();
   updateWishlistBadge();
 }
@@ -100,7 +190,7 @@ function escapeHTML(str) {
 }
 
 function formatPrice(num) {
-  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num * 15000);
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
 }
 
 function showToast(message, type = 'success') {

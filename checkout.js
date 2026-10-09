@@ -3,8 +3,8 @@
    ========================================================= */
 
 const CHK_TAX_RATE = 0.08;
-const CHK_FLAT_SHIPPING = 5.00;
-const CHK_FREE_SHIPPING_THRESHOLD = 75;
+const CHK_FLAT_SHIPPING = 25000;
+const CHK_FREE_SHIPPING_THRESHOLD = 500000;
 
 let checkoutUser = null;
 let checkoutItems = [];

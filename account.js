@@ -21,15 +21,29 @@ function setupTabs() {
   const tabs = document.querySelectorAll('.account-nav-item[data-target]');
   const sections = document.querySelectorAll('.account-content-section');
 
+  const activateTab = (targetId) => {
+    tabs.forEach(t => t.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+
+    const activeTab = Array.from(tabs).find(t => t.getAttribute('data-target') === targetId) || tabs[0];
+    const targetSectionId = activeTab.getAttribute('data-target');
+    
+    activeTab.classList.add('active');
+    document.getElementById(targetSectionId).classList.add('active');
+  };
+
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      sections.forEach(s => s.classList.remove('active'));
-
-      tab.classList.add('active');
-      document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+      activateTab(tab.getAttribute('data-target'));
+      window.history.pushState(null, '', '#' + tab.getAttribute('data-target'));
     });
   });
+
+  // Handle initial load based on hash
+  if (window.location.hash) {
+    const hashTarget = window.location.hash.substring(1);
+    activateTab(hashTarget);
+  }
 }
 
 function prefillProfile() {
@@ -149,10 +163,26 @@ function loadWishlist() {
         <div class="product-category">${escapeHTML(p.category)}</div>
         <h3 class="product-title">${escapeHTML(p.name)}</h3>
         <div class="product-price">${formatPrice(p.price)}</div>
-        <button class="btn btn-outline-small btn-block" style="margin-top:10px;" onclick="removeFromWishlist('${p.id}')">Hapus dari Wishlist</button>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button class="btn btn-primary btn-block" onclick="wishlistAddToCart('${p.id}')">Add to Cart</button>
+          <button class="btn btn-outline-small btn-block" onclick="removeFromWishlist('${p.id}')">Hapus</button>
+        </div>
       </div>
     </div>
   `).join('');
+}
+
+function wishlistAddToCart(productId) {
+  const user = SessionDB.getCurrentUser();
+  if (!user) return;
+  const product = ProductDB.getById(productId);
+  if (!product || product.stock <= 0) {
+    showToast('Produk sedang habis.', 'error');
+    return;
+  }
+  CartDB.addItem(user.id, productId, 1);
+  if (typeof updateCartBadge === 'function') updateCartBadge();
+  showToast(`${product.name} ditambahkan ke keranjang.`);
 }
 
 function removeFromWishlist(productId) {

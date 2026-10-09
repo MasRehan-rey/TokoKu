@@ -3,8 +3,8 @@
    ========================================================= */
 
 const TAX_RATE = 0.08;
-const FLAT_SHIPPING = 5.00;
-const FREE_SHIPPING_THRESHOLD = 75;
+const FLAT_SHIPPING = 25000;
+const FREE_SHIPPING_THRESHOLD = 500000;
 
 let currentUser = null;
 
