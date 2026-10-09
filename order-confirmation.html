@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pesanan Berhasil — ShopLite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <a href="index.html" class="brand">
+          <span class="brand-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          </span>
+          Shop<span>Lite</span>
+        </a>
+
+        <div class="nav-menu">
+          <a href="index.html" class="nav-item">Home</a>
+          <a href="index.html#products-section" class="nav-item">Shop</a>
+        </div>
+
+        <div class="nav-actions">
+          <div id="authArea" class="auth-area"></div>
+          <a href="cart.html" class="nav-icon-btn cart-btn">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            </svg>
+            <span id="cartCount" class="cart-badge">0</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="confirm-wrap">
+      <div class="confirm-icon">✓</div>
+      <h2>Terima kasih atas pesananmu!</h2>
+      <p id="confirmMessage" style="color:var(--color-text-muted); font-size:0.95rem;">
+        Pembayaran berhasil disimulasikan dan pesananmu sedang disiapkan.
+      </p>
+      <div class="order-id-box" id="orderIdBox"></div>
+      <div id="orderItemsSummary" style="text-align:left; margin: 24px 0;"></div>
+      <a href="index.html" class="btn btn-primary">Lanjut Belanja di ShopLite →</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container text-center">
+      <p class="copyright">© 2026 ShopLite. Semua hak dilindungi.</p>
+    </div>
+  </footer>
+
+  <script src="db.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = requireLogin('login.html');
+      if (!user) return;
+      renderNavbar();
+
+      const orderId = sessionStorage.getItem('lastOrderId');
+      if (!orderId) {
+        document.getElementById('orderIdBox').textContent = 'Pesanan terbaru tidak ditemukan.';
+        return;
+      }
+
+      const order = OrderDB.getAll().find(o => o.id === orderId);
+      if (!order) {
+        document.getElementById('orderIdBox').textContent = 'Pesanan tidak ditemukan.';
+        return;
+      }
+
+      document.getElementById('orderIdBox').textContent = `Nomor Pesanan: ${order.id}`;
+
+      const itemsHTML = order.items.map(i => `
+        <div class="mini-order-item">
+          <span>${escapeHTML(i.name)} × ${i.qty}</span>
+          <span>${formatPrice(i.price * i.qty)}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('orderItemsSummary').innerHTML = `
+        ${itemsHTML}
+        <div class="summary-row total"><span>Total Dibayar</span><span>${formatPrice(order.total)}</span></div>
+      `;
+    });
+  </script>
+</body>
+</html>

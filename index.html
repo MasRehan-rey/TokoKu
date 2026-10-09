@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopLite — Modern & Minimal E-Commerce</title>
+  <meta name="description" content="ShopLite offers modern, premium essentials crafted for your lifestyle. Enjoy free shipping, secure payment, and easy returns.">
+  
+  <!-- Modern Typography: Google Font Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==================== HEADER / NAVBAR ==================== -->
+  <header class="site-header">
+    <nav class="navbar" id="mainNavbar">
+      <div class="navbar-inner">
+        <!-- Logo -->
+        <a href="index.html" class="brand" aria-label="ShopLite Home">
+          <span class="brand-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          </span>
+          Shop<span>Lite</span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <div class="nav-menu">
+          <a href="index.html" class="nav-item active">Home</a>
+          <a href="#products-section" class="nav-item">Shop</a>
+          <a href="#categories-section" class="nav-item">Collections</a>
+          <a href="#about-section" class="nav-item">About</a>
+        </div>
+
+        <!-- Right Action Icons & Search -->
+        <div class="nav-actions">
+          <!-- Search Field -->
+          <div class="nav-search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="navSearchInput" class="nav-search-input" placeholder="Search products..." aria-label="Cari produk">
+          </div>
+
+          <!-- Wishlist Button -->
+          <button id="navWishlistBtn" class="nav-icon-btn" aria-label="Wishlist" title="Lihat Wishlist">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <span id="wishlistCount" class="nav-badge" style="display:none;">0</span>
+          </button>
+
+          <!-- Shopping Cart Link -->
+          <a href="cart.html" class="nav-icon-btn cart-btn" aria-label="Keranjang Belanja" title="Keranjang Belanja">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <span id="cartCount" class="cart-badge">0</span>
+          </a>
+
+          <!-- User / Auth Area -->
+          <div class="auth-wrapper">
+            <div id="authArea" class="auth-area">
+              <!-- filled dynamically by auth.js -->
+            </div>
+          </div>
+
+          <!-- Mobile Hamburger Toggle -->
+          <button id="mobileMenuToggle" class="mobile-toggle-btn" aria-label="Buka menu navigasi">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Drawer Navigation -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+    <div id="mobileMenu" class="mobile-menu">
+      <div class="mobile-menu-header">
+        <a href="index.html" class="brand">
+          <span class="brand-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            </svg>
+          </span>
+          Shop<span>Lite</span>
+        </a>
+        <button id="mobileMenuClose" class="mobile-close-btn" aria-label="Tutup menu">&times;</button>
+      </div>
+      <div class="mobile-menu-body">
+        <a href="index.html" class="mobile-nav-link active">Home</a>
+        <a href="#products-section" class="mobile-nav-link">Shop</a>
+        <a href="#categories-section" class="mobile-nav-link">Collections</a>
+        <a href="#about-section" class="mobile-nav-link">About</a>
+        <div class="mobile-divider"></div>
+        <a href="cart.html" class="mobile-nav-link">Keranjang Belanja</a>
+        <div class="mobile-auth-placeholder" id="mobileAuthArea"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- ==================== HERO SECTION ==================== -->
+      <section class="hero-section">
+        <div class="hero-card">
+          <div class="hero-content">
+            <span class="hero-pill">NEW ARRIVALS</span>
+            <h1 class="hero-title">Discover The Best Products For You</h1>
+            <p class="hero-desc">
+              Explore our curated collection of premium essentials designed for modern lifestyles. Timeless aesthetics, sustainable materials, and effortless comfort.
+            </p>
+            <div class="hero-cta-group">
+              <a href="#products-section" class="btn btn-primary hero-btn">
+                Shop Now <span class="btn-arrow">→</span>
+              </a>
+              <a href="#special-offer" class="btn btn-secondary hero-btn-sec">
+                Explore Deals
+              </a>
+            </div>
+
+            <!-- Customer Social Proof -->
+            <div class="hero-social-proof">
+              <div class="avatar-group">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80" alt="Customer avatar" class="avatar-img">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80" alt="Customer avatar" class="avatar-img">
+                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&q=80" alt="Customer avatar" class="avatar-img">
+              </div>
+              <div class="proof-meta">
+                <div class="proof-stars">★★★★★</div>
+                <div class="proof-text"><strong>4.9k+</strong> Happy Customers (4.9 Rating)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-media">
+            <div class="hero-img-wrap">
+              <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=80" alt="ShopLite Featured Collection" class="hero-img">
+              
+              <!-- Floating Glassmorphic Badge -->
+              <div class="hero-float-card">
+                <div class="float-icon">★</div>
+                <div class="float-info">
+                  <div class="float-title">50% OFF</div>
+                  <div class="float-sub">Selected Items</div>
+                </div>
+              </div>
+
+              <div class="hero-float-tag">
+                <span class="tag-dot"></span> Premium Quality
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SERVICE BENEFITS ==================== -->
+      <section class="benefits-section">
+        <div class="benefits-grid">
+          <!-- Benefit 1 -->
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              <h4 class="benefit-title">Free Shipping</h4>
+              <p class="benefit-sub">On orders over $50</p>
+            </div>
+          </div>
+
+          <!-- Benefit 2 -->
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              <h4 class="benefit-title">Secure Payment</h4>
+              <p class="benefit-sub">100% secure payment</p>
+            </div>
+          </div>
+
+          <!-- Benefit 3 -->
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              <h4 class="benefit-title">Easy Returns</h4>
+              <p class="benefit-sub">30-day return policy</p>
+            </div>
+          </div>
+
+          <!-- Benefit 4 -->
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div class="benefit-text">
+              <h4 class="benefit-title">24/7 Support</h4>
+              <p class="benefit-sub">Dedicated support</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SHOP BY CATEGORIES ==================== -->
+      <section class="section categories-section" id="categories-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Shop by Categories</h2>
+            <p class="section-subtitle">Pick from our trending categories crafted to inspire</p>
+          </div>
+          <a href="#products-section" id="viewAllCategoriesBtn" class="section-link">
+            View All Categories <span class="link-arrow">→</span>
+          </a>
+        </div>
+
+        <div class="categories-row">
+          <!-- 1. Electronics (pastel blue) -->
+          <div class="category-card" data-category-target="Elektronik">
+            <div class="category-circle cat-bg-blue">
+              <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80" alt="Electronics" class="cat-img" loading="lazy">
+            </div>
+            <span class="category-name">Electronics</span>
+          </div>
+
+          <!-- 2. Fashion (pastel pink) -->
+          <div class="category-card" data-category-target="Fashion">
+            <div class="category-circle cat-bg-pink">
+              <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=300&q=80" alt="Fashion" class="cat-img" loading="lazy">
+            </div>
+            <span class="category-name">Fashion</span>
+          </div>
+
+          <!-- 3. Home & Kitchen (pastel yellow) -->
+          <div class="category-card" data-category-target="Rumah Tangga">
+            <div class="category-circle cat-bg-yellow">
+              <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=300&q=80" alt="Home & Kitchen" class="cat-img" loading="lazy">
+            </div>
+            <span class="category-name">Home & Kitchen</span>
+          </div>
+
+          <!-- 4. Beauty (pastel purple) -->
+          <div class="category-card" data-category-target="Kecantikan">
+            <div class="category-circle cat-bg-purple">
+              <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=300&q=80" alt="Beauty" class="cat-img" loading="lazy">
+            </div>
+            <span class="category-name">Beauty</span>
+          </div>
+
+          <!-- 5. Sports (pastel green) -->
+          <div class="category-card" data-category-target="Olahraga">
+            <div class="category-circle cat-bg-green">
+              <img src="https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?auto=format&fit=crop&w=300&q=80" alt="Sports" class="cat-img" loading="lazy">
+            </div>
+            <span class="category-name">Sports</span>
+          </div>
+
+          <!-- 6. Accessories (pastel beige) -->
+          <div class="category-card" data-category-target="Aksesori">
+            <div class="category-circle cat-bg-beige">
+              <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=300&q=80" alt="Accessories" class="cat-img" loading="lazy">
+            </div>
+            <span class="category-name">Accessories</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== BEST SELLING PRODUCTS ==================== -->
+      <section class="section products-section" id="products-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Best Selling Products</h2>
+            <p class="section-subtitle">Top rated goods loved by our community</p>
+          </div>
+          <a href="#products-section" id="viewAllProductsBtn" class="section-link">
+            View All Products <span class="link-arrow">→</span>
+          </a>
+        </div>
+
+        <!-- Filters Bar -->
+        <div class="filters-bar">
+          <div class="filter-search-box">
+            <svg class="filter-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Cari produk berdasarkan nama atau kategori...">
+          </div>
+
+          <div class="filter-selects-wrap">
+            <div class="custom-select-wrap">
+              <select id="categoryFilter" aria-label="Filter berdasarkan kategori">
+                <option value="">Semua Kategori</option>
+              </select>
+            </div>
+
+            <div class="custom-select-wrap">
+              <select id="sortSelect" aria-label="Urutkan produk">
+                <option value="default">Urutkan: Rekomendasi</option>
+                <option value="price-asc">Harga: Terendah</option>
+                <option value="price-desc">Harga: Tertinggi</option>
+                <option value="name-asc">Nama: A–Z</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Grid (filled by store.js) -->
+        <div id="productGrid" class="product-grid"></div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display:none;">
+          <div class="empty-state-icon">🔍</div>
+          <h3>Produk tidak ditemukan</h3>
+          <p>Coba kata pencarian lain atau pilih kategori yang berbeda.</p>
+          <button class="btn btn-primary" onclick="resetFilters()">Reset Filter</button>
+        </div>
+      </section>
+
+      <!-- ==================== SPECIAL OFFER BANNER ==================== -->
+      <section class="section offer-section" id="special-offer">
+        <div class="offer-banner">
+          <div class="offer-content">
+            <span class="offer-pill">Special Offer</span>
+            <h2 class="offer-title">Up to 50% Off</h2>
+            <p class="offer-desc">
+              Limited time offer on selected items. Upgrade your space and style with thoughtful, minimal designs before stock runs out.
+            </p>
+            <a href="#products-section" class="btn btn-primary offer-btn">
+              Shop the Sale <span class="btn-arrow">→</span>
+            </a>
+          </div>
+          <div class="offer-media">
+            <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=700&q=80" alt="Special Offer Sale" class="offer-img" loading="lazy">
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== CUSTOMER TESTIMONIALS ==================== -->
+      <section class="section testimonials-section" id="about-section">
+        <div class="section-header text-center">
+          <div>
+            <h2 class="section-title">What Our Customers Say</h2>
+            <p class="section-subtitle">Real experiences from thousands of happy shoppers</p>
+          </div>
+        </div>
+
+        <div class="testimonials-grid">
+          <!-- Testimonial 1 -->
+          <div class="testimonial-card">
+            <div class="testimonial-top">
+              <div class="quote-icon">“</div>
+              <div class="testimonial-stars">★★★★★</div>
+            </div>
+            <p class="testimonial-quote">
+              "The minimalist design and build quality exceeded all my expectations. Fast shipping, and the packaging was completely plastic-free and eco-friendly!"
+            </p>
+            <div class="testimonial-author">
+              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" alt="Sarah Jenkins" class="author-avatar" loading="lazy">
+              <div class="author-info">
+                <h4 class="author-name">Sarah Jenkins</h4>
+                <span class="author-status">Verified Buyer</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Testimonial 2 -->
+          <div class="testimonial-card">
+            <div class="testimonial-top">
+              <div class="quote-icon">“</div>
+              <div class="testimonial-stars">★★★★★</div>
+            </div>
+            <p class="testimonial-quote">
+              "I bought the Wireless Headphones and Coffee Maker. Both arrived within 2 days and look even more stunning in person than in the photos. 10/10 recommendation!"
+            </p>
+            <div class="testimonial-author">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="David Miller" class="author-avatar" loading="lazy">
+              <div class="author-info">
+                <h4 class="author-name">David Miller</h4>
+                <span class="author-status">Verified Buyer</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Testimonial 3 -->
+          <div class="testimonial-card">
+            <div class="testimonial-top">
+              <div class="quote-icon">“</div>
+              <div class="testimonial-stars">★★★★★</div>
+            </div>
+            <p class="testimonial-quote">
+              "Customer service is truly available 24/7 and resolved my query in minutes. The smooth checkout process and easy returns make shopping here a pure joy."
+            </p>
+            <div class="testimonial-author">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Emily Chen" class="author-avatar" loading="lazy">
+              <div class="author-info">
+                <h4 class="author-name">Emily Chen</h4>
+                <span class="author-status">Verified Buyer</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Col 1: Brand & Bio -->
+        <div class="footer-col brand-col">
+          <a href="index.html" class="brand footer-brand">
+            <span class="brand-icon">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              </svg>
+            </span>
+            Shop<span>Lite</span>
+          </a>
+          <p class="footer-bio">
+            Curated essentials for thoughtful living. We bring together modern aesthetics, sustainable materials, and fair prices for your everyday life.
+          </p>
+          <div class="footer-socials">
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Twitter">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Pinterest">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M8 12a4 4 0 1 1 8 0c0 2.2-1.5 3.5-3 3.5-1 0-1.8-.7-2-1.5l-.5 2.5"></path>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Col 2: Quick Links -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#products-section">Shop Collection</a></li>
+            <li><a href="#categories-section">Featured Categories</a></li>
+            <li><a href="#about-section">About Us</a></li>
+            <li><a href="cart.html">View Cart</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Customer Service -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Customer Service</h4>
+          <ul class="footer-links">
+            <li><a href="#">FAQ & Help Center</a></li>
+            <li><a href="#">Shipping & Delivery</a></li>
+            <li><a href="#">Returns & Exchanges</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Newsletter & Contact -->
+        <div class="footer-col newsletter-col">
+          <h4 class="footer-heading">Stay in the Loop</h4>
+          <p class="footer-news-text">
+            Subscribe for 10% off your first purchase and receive seasonal style stories.
+          </p>
+          <form class="footer-news-form" onsubmit="event.preventDefault(); showToast('Terima kasih telah berlangganan newsletter ShopLite!'); this.reset();">
+            <input type="email" placeholder="Your email address" required aria-label="Alamat email newsletter">
+            <button type="submit" class="btn btn-primary news-btn">Subscribe</button>
+          </form>
+          <div class="footer-contact-info">
+            <span>Email: hello@shoplite.com</span>
+            <span>Telp: +1 (800) 234-5678</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="footer-bottom">
+        <p class="copyright">© 2026 ShopLite. All rights reserved. Katalog demo dengan penyimpanan lokal browser.</p>
+        <div class="payment-badges">
+          <span class="pay-badge">VISA</span>
+          <span class="pay-badge">MC</span>
+          <span class="pay-badge">AMEX</span>
+          <span class="pay-badge">PAYPAL</span>
+          <span class="pay-badge">APPLE PAY</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="db.js"></script>
+  <script src="auth.js"></script>
+  <script src="store.js"></script>
+</body>
+</html>

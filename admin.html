@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin — ShopLite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <a href="index.html" class="brand">
+          <span class="brand-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+          </span>
+          Shop<span>Lite</span>
+          <span style="font-size:0.7rem; font-weight:800; background:var(--color-primary-soft); color:var(--color-primary-dark); padding:3px 8px; border-radius:999px; letter-spacing:0.04em;">ADMIN</span>
+        </a>
+        <div class="nav-actions">
+          <div id="authArea" class="auth-area"></div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container" style="padding-top:20px;">
+    <div class="page-header">
+      <h1>Dasbor Admin</h1>
+      <a href="index.html" class="btn btn-secondary btn-sm">Lihat Toko →</a>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="admin-stats">
+      <div class="stat-card">
+        <div class="stat-label">Jumlah Produk</div>
+        <div class="stat-value" id="statProducts">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Jumlah Pesanan</div>
+        <div class="stat-value" id="statOrders">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Pendapatan</div>
+        <div class="stat-value" id="statRevenue">$0.00</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Pengguna Terdaftar</div>
+        <div class="stat-value" id="statUsers">0</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="products">Kelola Produk</button>
+      <button class="admin-tab" data-tab="orders">Riwayat Pesanan</button>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div id="tabProducts">
+      <div class="page-header" style="margin-top:0;">
+        <div></div>
+        <button class="btn btn-primary btn-sm" id="addProductBtn">+ Tambah Produk</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Gambar</th>
+              <th>Nama Produk</th>
+              <th>Kategori</th>
+              <th>Harga</th>
+              <th>Stok</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="productsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div id="tabOrders" style="display:none;">
+      <div style="overflow-x:auto;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nomor Pesanan</th>
+              <th>Pelanggan</th>
+              <th>Produk</th>
+              <th>Total</th>
+              <th>Tanggal</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Product Modal -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-box">
+      <h3 id="modalTitle">Tambah Produk</h3>
+      <div id="modalError" class="form-error"></div>
+      <form id="productForm">
+        <input type="hidden" id="productId">
+        <div class="form-group">
+          <label for="prodName">Nama Produk</label>
+          <input type="text" id="prodName" required placeholder="Contoh: Sepatu Lari Minimal">
+        </div>
+        <div class="form-group">
+          <label for="prodCategory">Kategori</label>
+          <input type="text" id="prodCategory" required placeholder="Elektronik, Fashion, dsb.">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prodPrice">Harga ($)</label>
+            <input type="number" id="prodPrice" step="0.01" min="0" required placeholder="49.99">
+          </div>
+          <div class="form-group">
+            <label for="prodStock">Stok</label>
+            <input type="number" id="prodStock" min="0" required placeholder="20">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="prodImage">URL Gambar</label>
+          <input type="url" id="prodImage" required placeholder="https://images.unsplash.com/...">
+        </div>
+        <div class="form-group">
+          <label for="prodDesc">Deskripsi</label>
+          <textarea id="prodDesc" rows="3" placeholder="Deskripsi singkat produk..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancelModalBtn">Batal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Simpan Produk</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-box" style="max-width:380px;">
+      <h3>Hapus Produk?</h3>
+      <p style="color:var(--color-text-muted); font-size:0.92rem;">
+        Produk ini akan dihapus secara permanen dari katalog toko.
+      </p>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" id="cancelDeleteBtn">Batal</button>
+        <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn">Ya, Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container text-center">
+      <p class="copyright">© 2026 ShopLite. Panel Administrasi Toko.</p>
+    </div>
+  </footer>
+
+  <script src="db.js"></script>
+  <script src="auth.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
